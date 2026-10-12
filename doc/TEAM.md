@@ -39,8 +39,6 @@ Phase C chạy live thành công (xem blueprint).
 Models/Qdrant/50 answers: chưa sinh `artifacts/answers_50q.json` trên máy này;
 Phase A/B do thành viên khác phụ trách.
 
-Hỗ trợ AI: Codex và Claude Code hỗ trợ triển khai T9a–T12, debug môi trường và
-chỉnh guard; kiểm chứng bằng unit tests, live run và `check_lab.py`.
 Xem [blueprint](reports/blueprint.md).
 
 ## INDIVIDUAL
@@ -54,7 +52,7 @@ Sao chép mẫu cho mỗi thành viên; tiêu đề họ tên không dấu-MSSV.
 - Cách kiểm tra: `pytest tests/test_phase_c.py -q` → 18 passed; `python scripts/run_experiments.py --phase c --live --latency-samples 20` → "Adversarial suite: 28/28 passed"; `check_lab.py` PASS `phase_c_guard.py`, `Phase C artifact`, `blueprint.md`.
 - Điều đã học: guard nhiều lớp — Presidio rẻ (~10 ms) cho PII có định dạng, LLM self-check cho ý định (jailbreak, off-topic, impersonation); NER tiếng Anh trên văn bản tiếng Việt gây false positive hàng loạt nên phải giới hạn entity; đọc quyết định rail thay vì đoán từ chuỗi refusal; P95 tính từ raw samples với nội suy tuyến tính, tổng tính theo từng mẫu.
 - Giới hạn/cách xử lý: lượt 1 clean 0/8 (Presidio NER) → lọc entity + test Presidio thật; lượt 2 attacks 18/20, clean 7/8 → làm rõ prompt theo nhóm chủ đề (không chép fixtures); LLM guard không tất định nên kết quả có thể dao động giữa các lượt. P95 vượt budget 500 ms do NeMo LLM call qua proxy — ghi số thật, chưa tối ưu.
-- Nguồn/AI hỗ trợ nếu có: Codex và Claude Code hỗ trợ code, debug môi trường (Annoy/MSVC, spaCy model) và phân tích lỗi; tự kiểm chứng bằng unit tests, 3 lượt live và checker.
+- Nguồn/AI hỗ trợ nếu có: Codex, Claude Code (hỗ trợ code/debug); tự kiểm chứng bằng tests, live run và checker.
 
 ### {{HoVaTen}}-{{MSSV}}
 
