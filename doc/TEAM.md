@@ -8,7 +8,7 @@ Trưởng nhóm/người nộp: Nguyễn Phi Nhật — 2A202602658
 
 Ngày lab/deadline áp dụng: 12/10/2026 23:59 — Asia/Ho_Chi_Minh (UTC+07:00)
 
-Commit dùng để chấm: 5eac362c3e414c3e8ad6f54dd00d3d4ec74a9582
+Commit dùng để chấm: d99db233799596d277384a35d64b3b56596f0299
 
 Mỗi nhóm nộp một repo. Điền đủ thành viên và một mục INDIVIDUAL cho từng người.
 Thêm/xóa rows để khớp nhóm thật; mẫu ba rows không ép nhóm phải có ba người.
