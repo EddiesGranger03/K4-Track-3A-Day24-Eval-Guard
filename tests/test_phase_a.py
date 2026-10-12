@@ -82,3 +82,28 @@ def test_weakest_distribution_is_quality_not_size():
             results.append(RagasResult(len(results)+1,dist,"Q","A",["C"],"GT",
                                        value,value,value,value))
     assert cluster_analysis(results)["dominant_failure_distribution"] == "adversarial"
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), None, -0.1, 1.1, True])
+def test_adapter_rejects_unmeasured_or_invalid_score(monkeypatch, value):
+    answer = {**load_test_set_50q()[0], "answer": "A", "contexts": ["C"]}
+    metric = SimpleNamespace(faithfulness=value, answer_relevancy=.7,
+                             context_precision=.6, context_recall=.5)
+    monkeypatch.setitem(sys.modules, "src.m4_eval", SimpleNamespace(evaluate_ragas=lambda *args: {
+        "per_question": [metric], "metadata": {"evaluator_models": ["measured-model"]}}))
+    with pytest.raises(ValueError):
+        run_ragas_50q([answer])
+
+
+def test_adapter_rejects_truncated_evaluation(monkeypatch):
+    answer = {**load_test_set_50q()[0], "answer": "A", "contexts": ["C"]}
+    monkeypatch.setitem(sys.modules, "src.m4_eval", SimpleNamespace(evaluate_ragas=lambda *args: {
+        "per_question": [], "metadata": {"evaluator_models": ["measured-model"]}}))
+    with pytest.raises(ValueError, match="row count"):
+        run_ragas_50q([answer])
+
+
+def test_empty_groups_and_clusters():
+    assert group_by_distribution([]) == {"factual": [], "multi_hop": [], "adversarial": []}
+    assert cluster_analysis([])["dominant_failure_distribution"] is None
+    with pytest.raises(ValueError, match="Unknown distribution"):
+        group_by_distribution([{"distribution": "unknown"}])

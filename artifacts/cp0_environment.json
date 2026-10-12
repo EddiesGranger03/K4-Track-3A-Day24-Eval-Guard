@@ -1,0 +1,80 @@
+{
+  "created_at": "2026-10-12T05:16:13.263370+00:00",
+  "python": "3.11.16",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "dependencies": {
+    "ragas": "0.1.22",
+    "langchain": "0.2.17",
+    "langchain-core": "0.2.43",
+    "langchain-openai": "0.1.25",
+    "openai": "1.109.1",
+    "qdrant-client": "1.9.2",
+    "numpy": "1.26.4",
+    "pyarrow": "19.0.1",
+    "spacy": "3.8.16",
+    "nemoguardrails": "0.10.0"
+  },
+  "qdrant_image": "qdrant/qdrant:v1.9.7",
+  "retrieval_backend": "qdrant_server",
+  "embedding_model": "BAAI/bge-m3",
+  "reranker_model": "BAAI/bge-reranker-v2-m3",
+  "model_revisions": {
+    "BAAI/bge-m3": "5617a9f61b028005a4858fdac845db406aefb181",
+    "BAAI/bge-reranker-v2-m3": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+  },
+  "indexed_documents": 26,
+  "indexed_chunks": 109,
+  "skipped_scan_pdfs": [
+    "BCTC.pdf",
+    "Nghi_dinh_so_13-2023_ve_bao_ve_du_lieu_ca_nhan_508ee.pdf"
+  ],
+  "corpus_sha256": {
+    "BCTC.pdf": "b41b4a83c61b39301e768494c3922ce60ce9264272bea63eea89fbb26bb6edf9",
+    "Nghi_dinh_so_13-2023_ve_bao_ve_du_lieu_ca_nhan_508ee.pdf": "a406f6f0a813b209eb6fca473d813badaec2ea58da28926a557ebf17f90458b5",
+    "bang_luong_2024.md": "326f663b61746c93eedf0f3f2ede929af65670d670e9e72167a39798186b308c",
+    "bao_hiem_suc_khoe.md": "1f36be9ed3fb40ffd4d74c0ee3df49ef35cf4a41af65449bbc516325e6cd63b5",
+    "bao_mat_su_co.md": "9c6ecec7f0a55347270da220afb07f6ebf09a43feff023fb42127d9f3d557980",
+    "chi_phi_expense.md": "f2ab17759c98ade9168c3cf149dc0b4ff045286d6c50545dac5dc84d60a6427c",
+    "cong_tac_phi.md": "c4d4b8570d4573499c4e72414423080d7330ddfaf2c77d286d5e279a0fa1cc98",
+    "danh_gia_hieu_suat.md": "cfff4ee52d3e5c100d155c55caef0a7ecb2f795805aa1440918b5df16df645c3",
+    "dao_tao_noi_bo.md": "9df71ea1a8da4bff278786775af69836aca3b35115010d718c88faafbf595449",
+    "hoan_chi_dao_tao.md": "283a0a64182d01e2ed3ac6a5d845bbb649e93819d01ac92b3a62dab060bd66dd",
+    "ky_luong.md": "694b82da5f6c027dda52f716f8afdcf946c2ed164130f394be5ed28232143698",
+    "lam_viec_tu_xa.md": "e7a72c4c9b331dfb4987a4bf5706e701f49c365f518e75bbd387df8fe890b7be",
+    "mat_khau_v1.md": "adbad1f2b35c4e3b25de558ff410d9ade00256050b9276c529c616bea98b06dc",
+    "mat_khau_v2.md": "35ace463e137f605ff06d48fba26aadafe6bcc6eb118d5582b4149fb35993d90",
+    "mentor_buddy.md": "a71f801fc2eef2a84f74b70d978af8c332009df6abbd5cd65af4900325426f7a",
+    "mua_sam.md": "bf055b88eba0b1ce6f9ea9894ff32b1e826191b5b43468db2469e7586591ae2e",
+    "nghi_om.md": "6fc497f5d7d087324fd2dd9b1124ac0358ac4f70c2c5c39c01a1618b2bcaea5d",
+    "nghi_phep_dac_biet.md": "ac4ac4ed21c2ed7da7cfc4598ae864a3e4c8fa14ab6b8d4ad772f2a2dc2a5cc8",
+    "nghi_phep_khong_luong.md": "25e55a44404c90fad60dbf06ae33f99e3d9386a09ab334a081599fa93f4b117d",
+    "nghi_phep_nam_v2023.md": "a99281ea7052175b044409a94aa0894e1465333ddb511ad105d1f99dbf80515a",
+    "nghi_phep_nam_v2024.md": "197008c2fb356a82de51889642f4c099ce22e8135dc661216ee8810f2bebb8a5",
+    "phan_loai_du_lieu.md": "d4d3ab5cb14d03e6224b3c38b980464959e7e32337cbe9af689344c5210b6010",
+    "phu_cap.md": "3829e7df4a79245786aba82783dd3bf451567c5e9c093941402512ce7d64e6b5",
+    "so_tay_an_toan.pdf": "8cc0269522f837e329ffc16e80d28165837fbfbb74bd7c43973c17486e07d7d3",
+    "tam_ung.md": "5b9e8d5ef35f93d51708746ac158364986549092ecb44f22907b4ed89594966e",
+    "thu_viec.md": "a1daf7c9e3fedd7f791b39595f568032f838f9f21d99708a9b0ca7deee689ddb",
+    "thuong_tet.md": "965ae93e0f64bb3ce1291bb4a69e554c11659d1eadc1699265543bbe72119d51",
+    "vpn_truy_cap.md": "c8cb871e4abff0bf5644eb8abe97d898697cb360773bfc22788d5196469b0624"
+  },
+  "evidence": [
+    "artifacts/run_logs/cp0_setup.log",
+    "artifacts/run_logs/phase_a_live.log",
+    "artifacts/run_logs/phase_a_tests.log",
+    "artifacts/run_logs/phase_a_validation.log"
+  ],
+  "answers_sha256": "c5be60e93eb781a5d49df43defecf86a1c094bf7a5fb229c263c4ab24979e943",
+  "generation_mode_counts": {
+    "llm": 50
+  },
+  "distribution_counts": {
+    "factual": 20,
+    "multi_hop": 20,
+    "adversarial": 10
+  },
+  "evaluation_models": [
+    "gpt-4o-mini",
+    "text-embedding-3-small"
+  ]
+}

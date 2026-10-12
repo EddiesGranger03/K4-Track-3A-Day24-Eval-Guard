@@ -1,0 +1,4 @@
+CP0/Phase A OK: 50 answers (20/20/10), source fields/order/models preserved
+RAGAS OK: 200 finite metrics, exact bottom 10, matrix/means and source hashes valid
+failure_clusters.md OK: populated report, no placeholders
+Scope: CP0/Phase A; complete team identities, Git evidence and other phases separately

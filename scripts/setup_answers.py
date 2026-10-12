@@ -136,6 +136,13 @@ def main(argv=None):
         print("→ Đảm bảo bạn đã copy src/ từ Day 18 và đã pip install -r requirements/requirements.txt")
         sys.exit(1)
 
+    if search.dense.backend != "qdrant_server" or search.dense._encoder_failed:
+        raise ValueError("CP0 requires Qdrant server and BGE embeddings without fallback")
+    if not search.dense.search("Chính sách nghỉ phép", top_k=1):
+        raise ValueError("Dense retrieval preflight failed")
+    reranker._load_model()
+    print(f"  ✓ Dense retrieval OK: {search.dense.backend}; reranker model loaded")
+
     print(f"\nRunning {len(test_set)} queries...")
     answers = []
     from config import OPENAI_API_KEY

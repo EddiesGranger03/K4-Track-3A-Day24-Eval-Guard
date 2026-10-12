@@ -1,0 +1,45 @@
+============================================================
+K4 / TRACK 3A SETUP — Generating answers for 50 questions
+============================================================
+✓ Day 18 source files: 5/5 found
+✓ Loaded 50 questions (factual/multi_hop/adversarial)
+
+[1/3] Chunking + enriching documents...
+Ignoring wrong pointing object 11 0 (offset 0)
+  ⚠️  Bỏ qua BCTC.pdf: PDF scan ảnh, không có text layer (cần OCR).
+  ⚠️  Bỏ qua Nghi_dinh_so_13-2023_ve_bao_ve_du_lieu_ca_nhan_508ee.pdf: PDF scan ảnh, không có text layer (cần OCR).
+  Enriched 10/109 chunks...
+  Enriched 20/109 chunks...
+  Enriched 30/109 chunks...
+  Enriched 40/109 chunks...
+  Enriched 50/109 chunks...
+  Enriched 60/109 chunks...
+  Enriched 70/109 chunks...
+  Enriched 80/109 chunks...
+  Enriched 90/109 chunks...
+  Enriched 100/109 chunks...
+  Enriched 109/109 chunks...
+  ✓ Enriched 109 chunks (0.1s)
+
+[2/3] Indexing (BM25 + Dense)...
+Loading weights:   0%|          | 0/391 [00:00<?, ?it/s]Loading weights: 100%|██████████| 391/391 [00:00<00:00, 35622.93it/s]
+Batches:   0%|          | 0/4 [00:00<?, ?it/s]Batches:  25%|██▌       | 1/4 [00:02<00:06,  2.27s/it]Batches:  50%|█████     | 2/4 [00:03<00:03,  1.88s/it]Batches:  75%|███████▌  | 3/4 [00:04<00:01,  1.46s/it]Batches: 100%|██████████| 4/4 [00:05<00:00,  1.03it/s]Batches: 100%|██████████| 4/4 [00:05<00:00,  1.27s/it]
+  ✓ Dense retrieval OK: qdrant_server
+  ✓ Indexed 109 chunks (19.1s)
+
+[3/3] Loading reranker...
+Loading weights:   0%|          | 0/393 [00:00<?, ?it/s]Loading weights: 100%|██████████| 393/393 [00:00<00:00, 4152.62it/s]
+  ✓ Reranker ready (1.3s)
+
+Running 50 queries...
+  [10/50] done (39s elapsed)
+  [20/50] done (74s elapsed)
+  [30/50] done (120s elapsed)
+  [40/50] done (156s elapsed)
+  [50/50] done (188s elapsed)
+
+✓ Saved 50 answers → artifacts/answers_50q.json
+  Total time: 188.2s
+
+→ Bây giờ bắt đầu Phase A:
+     python scripts/run_experiments.py --phase a --live

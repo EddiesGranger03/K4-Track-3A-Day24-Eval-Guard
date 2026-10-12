@@ -10,3 +10,6 @@ nemoguardrails==0.10.0
 openai==1.109.1
 annoy==1.17.3
 numpy==1.26.4
+
+# PyArrow 26 requires NumPy 2 at import time; runtime uses NumPy 1.26.4.
+pyarrow==19.0.1
