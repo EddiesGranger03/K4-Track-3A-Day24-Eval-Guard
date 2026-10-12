@@ -129,11 +129,11 @@ class DenseSearch:
             return []
         try:
             encoder = self._get_encoder()
-            if self._encoder_failed:
+            if getattr(self, "_encoder_failed", False):
                 query_vector = encoder.transform([query]).toarray()[0].tolist()
             else:
                 query_vector = encoder.encode(query, normalize_embeddings=True).tolist()
-            response = self.client.search(collection_name=collection, query_vector=query_vector, limit=top_k, with_payload=True)
+            response = self.client.search(collection, query_vector=query_vector, limit=top_k)
             return [SearchResult(str(pt.payload.get("text", "")), float(pt.score),
                                  {k: v for k, v in pt.payload.items() if k != "text"}, "dense")
                     for pt in response if pt.payload]

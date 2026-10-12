@@ -180,7 +180,11 @@ def chunk_hierarchical(text: str, parent_size: int = HIERARCHICAL_PARENT_SIZE,
     parents, children = [], []
     for i, parent_text in enumerate(parent_texts):
         pid = f"parent_{i}"
-        parents.append(Chunk(parent_text, {**metadata, "chunk_type": "parent", "parent_id": pid, "chunk_index": i}))
+        parents.append(Chunk(
+            parent_text,
+            {**metadata, "chunk_type": "parent", "parent_id": pid, "chunk_index": i},
+            pid,
+        ))
         # Use overlapping windows so boundaries do not lose sentence fragments.
         start = 0
         while start < len(parent_text):

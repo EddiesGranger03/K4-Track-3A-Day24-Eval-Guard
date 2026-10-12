@@ -75,7 +75,7 @@ def test_output_checks_supplied_answer(blocked):
     assert rails.generate_async.call_args.kwargs["options"]["rails"]==["output"]
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def guard_batch():
     patch=pytest.MonkeyPatch()
     attacks,clean=read_json(ADVERSARIAL_SET_PATH),read_json(CLEAN_SET_PATH)
@@ -115,3 +115,45 @@ def test_latency_real_warmup_and_sample_count(monkeypatch):
     validate_latency(result)
     assert pii.call_count==22 and nemo.await_count==22
     assert result["input_guard_ms"]["p95"]==pytest.approx(4)
+
+
+@pytest.mark.parametrize("stage", ["input", "output"])
+@pytest.mark.parametrize("failure", ["missing_log", "exception"])
+def test_rail_runtime_failure_is_not_reported_as_safe(stage, failure):
+    result = SimpleNamespace(
+        response=[{"role": "assistant", "content": ""}],
+        log=SimpleNamespace(activated_rails=[SimpleNamespace(stop=False)]),
+    )
+    if failure == "missing_log":
+        result.log.activated_rails = []
+    else:
+        result.response[0]["role"] = "exception"
+    rails = SimpleNamespace(generate_async=AsyncMock(return_value=result))
+    call = (phase.check_input_rail("question", rails) if stage == "input"
+            else phase.check_output_rail("question", "answer", rails))
+    with pytest.raises(RuntimeError, match="NeMo"):
+        asyncio.run(call)
+
+
+def test_latency_measures_both_layers_even_when_pii_blocks(monkeypatch):
+    pii = Mock(return_value={"has_pii": True})
+    nemo = AsyncMock(return_value={"allowed": False})
+    monkeypatch.setattr(phase, "pii_scan", pii)
+    monkeypatch.setattr(phase, "check_input_rail", nemo)
+    result = phase.measure_p95_latency(
+        ["first", "second"], n_runs=3,
+        rails=object(), analyzer=object(), anonymizer=object(),
+    )
+    assert result["n_samples"] == 3
+    assert [call.args[0] for call in pii.call_args_list] == ["first", "second", "first", "second", "first"]
+    assert [call.args[0] for call in nemo.await_args_list] == ["first", "second", "first", "second", "first"]
+
+
+def test_real_presidio_ignores_vietnamese_clean_text():
+    pytest.importorskip("presidio_analyzer")
+    spacy = pytest.importorskip("spacy")
+    if not spacy.util.is_package("en_core_web_lg"):
+        pytest.skip("en_core_web_lg not installed")
+    engines = phase.setup_presidio()
+    assert not phase.pii_scan("Xin lỗi, tôi không thể đi làm ngày mai; quy trình nghỉ phép theo chính sách v2024?", *engines)["has_pii"]
+    assert phase.pii_scan("CCCD 034095001234, SĐT 0987654321", *engines)["has_pii"]

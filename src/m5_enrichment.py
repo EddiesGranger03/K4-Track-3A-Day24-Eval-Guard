@@ -24,7 +24,6 @@ from dataclasses import dataclass
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import OPENAI_API_KEY, GENERATION_MODEL
 
-LLM_API_KEY = OPENAI_API_KEY
 LLM_MODEL = GENERATION_MODEL
 
 
@@ -32,11 +31,11 @@ def create_llm_client():
     """Use the OpenAI client configured by the Day 24 starter."""
     from openai import OpenAI
 
-    return OpenAI(api_key=LLM_API_KEY)
+    return OpenAI(api_key=OPENAI_API_KEY)
 
 
 def _has_api_key() -> bool:
-    key = (LLM_API_KEY or "").strip()
+    key = (OPENAI_API_KEY or "").strip()
     return bool(key and not key.startswith("#"))
 
 
@@ -234,7 +233,7 @@ def enrich_chunks(
             enriched_text=enriched_text,
             summary=summary,
             hypothesis_questions=questions,
-            auto_metadata={**chunk.get("metadata", {}), **auto_meta},
+            auto_metadata={**auto_meta, **chunk.get("metadata", {})},
             method="+".join(methods),
         ))
 

@@ -28,6 +28,7 @@ SEMANTIC_THRESHOLD = 0.85
 BM25_TOP_K = 20
 DENSE_TOP_K = 20
 HYBRID_TOP_K = 20
+RRF_K = 60
 RERANK_TOP_K = 3
 
 # --- Paths ---
@@ -47,6 +48,8 @@ PAIR_QUESTION_IDS = (1, 5, 12, 21, 41)
 # --- LLM Judge ---
 GENERATION_MODEL = "gpt-4o-mini"
 JUDGE_MODEL = "gpt-4o-mini"
+EVALUATION_LLM_MODEL = "gpt-4o-mini"
+EVALUATION_EMBEDDING_MODEL = "text-embedding-3-small"
 
 # --- Day 18 Compatibility (for m4_eval and m5_enrichment) ---
 LLM_MODEL = os.getenv("LLM_MODEL", GENERATION_MODEL)

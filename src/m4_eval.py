@@ -43,31 +43,38 @@ def evaluate_ragas(questions: list[str], answers: list[str],
     from config import OPENAI_API_KEY, GENERATION_MODEL, ROOT_DIR
     if not (len(questions) == len(answers) == len(contexts) == len(ground_truths)):
         raise ValueError("RAGAS inputs must have equal lengths")
-    if not questions or not OPENAI_API_KEY:
-        raise ValueError("RAGAS requires nonempty inputs and OPENAI_API_KEY")
+    if not questions:
+        raise ValueError("RAGAS requires nonempty inputs")
     from datasets import Dataset
     from langchain_openai import ChatOpenAI, OpenAIEmbeddings
     from ragas import evaluate
     from ragas.metrics import faithfulness, answer_relevancy, context_precision, context_recall
-    from ragas.run_config import RunConfig
     keys = ("faithfulness", "answer_relevancy", "context_precision", "context_recall")
     llm_model = os.getenv("EVALUATOR_LLM_MODEL", GENERATION_MODEL)
     embedding_model = os.getenv("EVALUATOR_EMBEDDING_MODEL", "text-embedding-3-small")
     base_url = os.getenv("OPENAI_BASE_URL", "").strip()
-    common = {"api_key": OPENAI_API_KEY}
+    common = {"api_key": OPENAI_API_KEY} if OPENAI_API_KEY else {}
     if base_url:
         common["base_url"] = base_url
-    llm = ChatOpenAI(model=llm_model, temperature=0, timeout=90, max_retries=2,
-                     max_tokens=2048, **common)
-    embeddings = OpenAIEmbeddings(model=embedding_model, check_embedding_ctx_length=False,
-                                  request_timeout=90, max_retries=2, **common)
+
+    try:
+        llm = ChatOpenAI(model=llm_model, temperature=0, timeout=90, max_retries=2,
+                         max_tokens=2048, **common)
+    except TypeError:
+        llm = ChatOpenAI(model=llm_model, temperature=0)
+    try:
+        embeddings = OpenAIEmbeddings(model=embedding_model, check_embedding_ctx_length=False,
+                                      request_timeout=90, max_retries=2, **common)
+    except TypeError:
+        embeddings = OpenAIEmbeddings(model=embedding_model)
     models = [llm.model_name, embeddings.model]
     inputs = [{"question": q, "answer": a, "contexts": c, "ground_truth": gt}
               for q, a, c, gt in zip(questions, answers, contexts, ground_truths)]
     digest = hashlib.sha256(json.dumps(["ragas-0.1.22-v1", models, base_url, inputs],
                                        ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     cache = Path(ROOT_DIR) / ".cache" / "ragas" / (digest + ".json")
-    measured = json.loads(cache.read_text()) if cache.exists() and os.getenv("RAGAS_REFRESH") != "1" else {}
+    use_cache = bool(OPENAI_API_KEY) and os.getenv("RAGAS_REFRESH") != "1"
+    measured = json.loads(cache.read_text()) if use_cache and cache.exists() else {}
     for attempt in range(3):
         pending = [i for i in range(len(inputs)) if str(i) not in measured]
         if not pending:
@@ -75,21 +82,32 @@ def evaluate_ragas(questions: list[str], answers: list[str],
         for offset in range(0, len(pending), 10):
             indices = pending[offset:offset + 10]
             print(f"RAGAS attempt {attempt+1}: measuring rows {[i+1 for i in indices]}", flush=True)
-            dataset = Dataset.from_list([inputs[i] for i in indices])
+            batch = [inputs[i] for i in indices]
+            dataset = Dataset.from_dict({key: [row[key] for row in batch] for key in
+                                         ("question", "answer", "contexts", "ground_truth")})
             result = evaluate(dataset, metrics=[faithfulness, answer_relevancy, context_precision, context_recall],
-                              llm=llm, embeddings=embeddings, raise_exceptions=False,
-                              run_config=RunConfig(timeout=180, max_retries=3, max_workers=4))
+                              llm=llm, embeddings=embeddings, raise_exceptions=True)
             frame = result.to_pandas()
-            if len(frame) != len(indices):
+            try:
+                records = frame.to_dict(orient="records")
+            except TypeError:
+                records = frame.to_dict()
+            if len(records) != len(indices):
                 raise ValueError("RAGAS returned the wrong row count")
-            for index, (_, row) in zip(indices, frame.iterrows()):
+            for index, row in zip(indices, records):
+                source = inputs[index]
+                if (row.get("question") != source["question"] or row.get("answer") != source["answer"]
+                        or list(row.get("contexts", [])) != source["contexts"]
+                        or row.get("ground_truth") != source["ground_truth"]):
+                    raise ValueError(f"RAGAS changed input order or content at row {index+1}")
                 scores = {key: float(row[key]) for key in keys}
                 if all(math.isfinite(value) and 0 <= value <= 1 for value in scores.values()):
                     measured[str(index)] = scores
                 else:
                     print(f"RAGAS row {index+1}: invalid metric; retry required", flush=True)
-            cache.parent.mkdir(parents=True, exist_ok=True)
-            cache.write_text(json.dumps(measured, ensure_ascii=False, allow_nan=False))
+            if OPENAI_API_KEY:
+                cache.parent.mkdir(parents=True, exist_ok=True)
+                cache.write_text(json.dumps(measured, ensure_ascii=False, allow_nan=False))
     missing = [i+1 for i in range(len(inputs)) if str(i) not in measured]
     if missing:
         raise ValueError(f"RAGAS has no complete finite metrics for rows {missing}; real measured rows cached")
