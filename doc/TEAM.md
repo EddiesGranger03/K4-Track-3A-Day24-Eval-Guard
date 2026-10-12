@@ -1,6 +1,6 @@
 # Nhóm thực hiện K4 Track 3A
 
-Tên nhóm: {{Tên nhóm}}
+Tên nhóm: SKUNN
 
 Repo chung: {{Link repo}}
 
@@ -17,9 +17,10 @@ Thêm/xóa rows để khớp nhóm thật; mẫu ba rows không ép nhóm phải
 
 | STT | Họ và tên | MSSV | Vai trò / công việc thật | Bằng chứng |
 |---|---|---|---|---|
-| 1 | {{Họ tên}} | {{MSSV}} | {{Phase/file/hàm}} | {{Commit/PR/report}} |
+| 1 | Nguyễn Khánh Sơn | 2A202602388 | Phase B: pairwise judge + swap/kappa/bias (`src/phase_b_judge.py` T5–T8) + `doc/reports/bias_report.md` | Branch `Son` commit 176b16f; `artifacts/judge_results.json` (κ=1.0); checker PASS Phase B |
 | 2 | {{Họ tên}} | {{MSSV}} | {{Phase/file/hàm}} | {{Commit/PR/report}} |
 | 3 | {{Họ tên}} | {{MSSV}} | {{Phase/file/hàm}} | {{Commit/PR/report}} |
+| 4 | {{Họ tên}} | {{MSSV}} | {{Phase/file/hàm}} | {{Commit/PR/report}} |
 
 Người tích hợp/chạy batch/nộp link: {{Họ tên, công việc và bằng chứng}}.
 
@@ -34,6 +35,15 @@ hoặc pip resolve để khẳng định runtime đã chạy.
 ## INDIVIDUAL
 
 Sao chép mẫu cho mỗi thành viên; tiêu đề họ tên không dấu-MSSV.
+
+### NguyenKhanhSon-2A202602388
+
+- Phần được giao và phần thực tế đã làm: Phase B sau khi đổi task với Nguyễn Nam Khánh — implement T5 `pairwise_judge`, T6 `swap_and_average`, T7 `cohen_kappa`, T8 `bias_report` trong `src/phase_b_judge.py`; chạy live ra `artifacts/judge_results.json`; điền `doc/reports/bias_report.md`.
+- Bằng chứng: branch `Son` commit 176b16f (`phase_b_judge.py`, `judge_results.json`, `bias_report.md`, `doc/indi.md`); κ=1.0 trên 10 nhãn, pair_sources đúng quy định.
+- Cách kiểm tra: `pytest tests/test_phase_b.py -q` 8/8 passed; `run_experiments.py --phase b --live` lưu artifact; `check_lab.py` PASS cả 3 mục Phase B.
+- Điều đã học: swap-and-average phát hiện position bias; phân biệt winner A/B/tie với nhãn 0/1; κ hiệu chỉnh đồng thuận ngẫu nhiên; verbosity bias bị nhiễu khi đáp án dài cũng đầy đủ ý hơn.
+- Giới hạn/cách xử lý: mẫu nhỏ (5 cặp/10 nhãn) nên bias chỉ là dấu hiệu; 50 answers là `extractive_fallback` (ngoài scope, đã cảnh báo nhóm); fix thiếu `jsonschema` và `OPENAI_BASE_URL` cho runner.
+- Nguồn/AI hỗ trợ nếu có: AI assistant implement theo hợp đồng tests, tự kiểm chứng bằng mock tests + live run + checker.
 
 ### {{HoVaTen}}-{{MSSV}}
 
