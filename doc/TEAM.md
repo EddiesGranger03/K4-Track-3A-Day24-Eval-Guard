@@ -2,13 +2,13 @@
 
 Tên nhóm: SKUNN
 
-Repo chung: {{Link repo}}
+Repo chung: https://github.com/EddiesGranger03/K4-Track-3A-Day24-Eval-Guard
 
-Trưởng nhóm/người nộp: {{Họ tên và MSSV}}
+Trưởng nhóm/người nộp: Nguyễn Phi Nhật — 2A202602658
 
-Ngày lab/deadline áp dụng: {{Ngày giờ theo thông báo lớp}} — Asia/Ho_Chi_Minh (UTC+07:00)
+Ngày lab/deadline áp dụng: 12/10/2026 23:59 — Asia/Ho_Chi_Minh (UTC+07:00)
 
-Commit dùng để chấm: {{Commit SHA}}
+Commit dùng để chấm: e1bdddcce4adebca5cf5288059d97d41bb721c3b
 
 Mỗi nhóm nộp một repo. Điền đủ thành viên và một mục INDIVIDUAL cho từng người.
 Thêm/xóa rows để khớp nhóm thật; mẫu ba rows không ép nhóm phải có ba người.
@@ -20,9 +20,9 @@ Thêm/xóa rows để khớp nhóm thật; mẫu ba rows không ép nhóm phải
 | 1 | Nguyễn Nam Khánh | 2A202602568 | CP0 + Phase A: tích hợp m1–m5, sinh 50 answers, T1–T4 và phân tích lỗi | Nhánh `NguyenNamKhanh-2A202602568`; `artifacts/answers_50q.json`, `artifacts/ragas_50q.json`, `doc/reports/failure_clusters.md` |
 | 2 | Nguyễn Khánh Sơn | 2A202602388 | Phase B: pairwise judge + swap/kappa/bias (`src/phase_b_judge.py` T5–T8) + `doc/reports/bias_report.md` | Branch `Son` commit 176b16f; `artifacts/judge_results.json` (κ=1.0); checker PASS Phase B |
 | 3 | Ngô Đinh Minh Nhật | 2A202602569 | Phase C: `src/phase_c_guard.py` T9a–T12 + `guardrails/config.yml` + `doc/reports/blueprint.md` | Branch `ndmnhat`; `artifacts/guard_results.json` (attacks 20/20, clean 8/8, output 4/4); checker PASS Phase C |
-| 4 | {{Họ tên}} | {{MSSV}} | {{Phase/file/hàm}} | {{Commit/PR/report}} |
+| 4 | Nguyễn Phi Nhật | 2A202602658 | Task 13 Blueprint CI/CD, tích hợp code, kiểm thử hệ thống & nộp bài | Nhánh `NgPhiNhat`; `doc/reports/blueprint.md`, `doc/TEAM.md`, `.gitattributes`, `artifacts/judge_results.json` |
 
-Người tích hợp/chạy batch/nộp link: {{Họ tên, công việc và bằng chứng}}.
+Người tích hợp/chạy batch/nộp link: Nguyễn Phi Nhật — 2A202602658, tích hợp code các nhánh, chuẩn hóa LF, chạy live đối soát Phase B, chạy check_lab và nộp bài.
 
 ## Môi trường và chuẩn bị trước lớp
 
@@ -54,8 +54,6 @@ Xem [blueprint](reports/blueprint.md).
 - Giới hạn: chưa OCR hai PDF scan; 8 câu LLM trả “Không tìm thấy.”; chưa thực hiện ablation hoặc sửa generation để cải thiện điểm. Phase B/C và full NeMo runtime không thuộc phần đã chạy này. Không sửa ground truth, không bỏ policy cũ và không thay số đo lỗi bằng 0.
 - Nguồn/AI hỗ trợ: pipeline từ repo `K4-Track3A-DAY18-NguyenNamKhanh-2A202602568-ProductionRAG`; Codex hỗ trợ triển khai, debug, chạy kiểm chứng và viết phân tích từ artifacts thật. Nguyễn Nam Khánh cần review và hiểu phần được hỗ trợ trước khi trình bày/nộp.
 
-Sao chép mẫu cho mỗi thành viên; tiêu đề họ tên không dấu-MSSV.
-
 ### NguyenKhanhSon-2A202602388
 
 - Phần được giao và phần thực tế đã làm: Phase B sau khi đổi task với Nguyễn Nam Khánh — implement T5 `pairwise_judge`, T6 `swap_and_average`, T7 `cohen_kappa`, T8 `bias_report` trong `src/phase_b_judge.py`; chạy live ra `artifacts/judge_results.json`; điền `doc/reports/bias_report.md`.
@@ -74,16 +72,16 @@ Sao chép mẫu cho mỗi thành viên; tiêu đề họ tên không dấu-MSSV.
 - Giới hạn/cách xử lý: lượt 1 clean 0/8 (Presidio NER) → lọc entity + test Presidio thật; lượt 2 attacks 18/20, clean 7/8 → làm rõ prompt theo nhóm chủ đề (không chép fixtures); LLM guard không tất định nên kết quả có thể dao động giữa các lượt. P95 vượt budget 500 ms do NeMo LLM call qua proxy — ghi số thật, chưa tối ưu.
 - Nguồn/AI hỗ trợ nếu có: Codex, Claude Code (hỗ trợ code/debug); tự kiểm chứng bằng tests, live run và checker.
 
-### {{HoVaTen}}-{{MSSV}}
+### NguyenPhiNhat-2A202602658
 
-- Phần được giao và phần thực tế đã làm: {{Nhiệm vụ, file/hàm, mục đích}}.
-- Bằng chứng: {{Commit/PR và artifacts/reports liên quan}}.
-- Cách kiểm tra: {{Unit mock hoặc live experiment, lệnh và kết quả}}.
-- Điều đã học: {{Khái niệm và cách thể hiện trong bài}}.
-- Giới hạn/cách xử lý: {{Vấn đề và kiểm chứng}}.
-- Nguồn/AI hỗ trợ nếu có: {{Công cụ, phạm vi, cách tự kiểm chứng}}.
+- Phần được giao và thực tế hoàn tất: Task 13 (Blueprint CI/CD) trong `doc/reports/blueprint.md`; tích hợp toàn bộ code của 3 nhánh (`NguyenNamKhanh-2A202602568`, `Son`, `ndmnhat`) vào nhánh `NgPhiNhat`; chuẩn hóa line-ending LF bằng `.gitattributes` để khắc phục lỗi lệch hash trên Windows; chạy thực nghiệm live đối soát lại Phase B khi phát hiện `judge_results.json` cũ dùng extractive answers lệch với answers sinh bằng LLM của Phase A (đưa Cohen's κ lên 1.0 và position bias về 0.0); hoàn thiện kiểm tra toàn diện bằng `scripts/check_lab.py` và chuẩn bị nộp bài.
+- Bằng chứng: Nhánh `NgPhiNhat`; `doc/reports/blueprint.md`, `doc/TEAM.md`, `.gitattributes`, `artifacts/judge_results.json` cập nhật theo live run; kết quả `check_lab.py` PASS toàn bộ các hạng mục.
+- Cách kiểm tra: Chạy `py -3.14 scripts/check_lab.py` (tất cả các mục PASS 100%); chạy `pytest tests/test_phase_a.py -q` (14 passed), `pytest tests/test_phase_b.py -q` (8 passed), `pytest tests/test_phase_c.py -q` (17 passed); đối chiếu schema và source hashes của 4 artifact JSON.
+- Điều đã học: Quy trình thiết kế CI/CD Guardrails đa tầng (RAG Quality Gate, Judge Reliability Gate, Guardrail Gate); kỹ thuật swap-and-average để khử triệt để position bias của LLM Judge; tầm quan trọng của việc chuẩn hóa end-of-line (LF) giữa các môi trường Windows và macOS/Linux để đảm bảo tính toàn vẹn của mã băm SHA256; nguyên lý Presidio PII regex kết hợp NeMo self-check để đạt 100% block rate mà vẫn giữ 0% false positive.
+- Giới hạn/cách xử lý: P95 latency của NeMo input guard thực tế đạt 1991.30 ms (vượt budget 500 ms) do gọi LLM `gpt-4o-mini` qua cloud API; nhóm ghi nhận số liệu đo thực tế trung thực và đề xuất phương án tối ưu trong blueprint (dùng SLM local, classifier hoặc caching) thay vì sửa số liệu.
+- Nguồn/AI hỗ trợ nếu có: Antigravity IDE, OpenAI API; tự kiểm chứng toàn bộ bằng unit test offline, runner live và checker tự động.
 
 ## Cập nhật sau khi nộp
 
-{{Ghi phiên bản nộp; nếu sửa sau deadline, ghi commit/thời điểm/lý do và thông báo
-coach cho phép áp dụng bản cập nhật. Nếu không có cập nhật, ghi rõ không có.}}
+Bản nộp chính thức trước deadline 23:59 ngày 12/10/2026. Không có cập nhật sau deadline.
+

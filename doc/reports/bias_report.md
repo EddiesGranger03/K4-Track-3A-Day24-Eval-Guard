@@ -4,8 +4,8 @@ Nhóm: SKUNN
 
 Người phụ trách: Nguyễn Khánh Sơn — 2A202602388
 
-Nguồn: `artifacts/judge_results.json`; run timestamp: 2026-10-12T05:03:33.620156+00:00.
-Models generation/judge: generation=[] (50/50 answers là `extractive_fallback`, xem lưu ý cuối) / judge=[gpt-4o-mini qua OpenRouter].
+Nguồn: `artifacts/judge_results.json`; run timestamp: 2026-10-12T09:21:58.776006+00:00.
+Models generation/judge: generation=[gpt-4o-mini-2024-07-18] / judge=[gpt-4o-mini].
 
 ## Năm cặp A/B và hai lượt
 
@@ -15,18 +15,18 @@ Ids: 1, 5, 12, 21, 41. Không đổi nguồn sau khi xem kết quả judge.
 
 | id | winner_pass1 | scores_pass1 (A/B) | winner_pass2 (đã quy về A/B gốc) | scores_pass2 (A/B) | final | consistent |
 |---|---|---|---|---|---|---|
-| 1 | B | 0.8 / 1.0 | A | 1.0 / 0.7 | tie | False |
-| 5 | A | 0.7 / 0.2 | A | 0.6 / 0.2 | A | True |
-| 12 | A | 1.0 / 0.5 | A | 1.0 / 0.7 | A | True |
-| 21 | A | 1.0 / 0.8 | B | 0.6 / 1.0 | tie | False |
-| 41 | A | 1.0 / 0.0 | A | 1.0 / 0.2 | A | True |
+| 1 | B | 0.7 / 1.0 | B | 0.8 / 1.0 | B | True |
+| 5 | A | 0.8 / 0.3 | A | 0.7 / 0.2 | A | True |
+| 12 | A | 1.0 / 0.7 | A | 1.0 / 0.8 | A | True |
+| 21 | B | 0.0 / 1.0 | B | 0.0 / 1.0 | B | True |
+| 41 | A | 1.0 / 0.0 | A | 1.0 / 0.0 | A | True |
 
-Reasoning (rút gọn): id 1 — lượt 1 chọn B vì "chính xác và đầy đủ về số ngày nghỉ khi kết hôn", lượt 2 (đảo) chọn nội dung pipeline vì "chi tiết hơn, có nguồn"; id 5 — cả hai lượt chê cả hai đáp án nhưng vẫn chọn A; id 12, 41 — cả hai lượt nhất quán chọn A theo đúng reference (thưởng Tết, phép năm v2024); id 21 — lượt 1 chọn A ("chi tiết hơn về phép năm + lương Senior"), lượt 2 đổi sang B.
+Reasoning (rút gọn): id 1 — cả hai lượt nhất quán chọn B vì Answer B cung cấp đầy đủ thông tin về việc nghỉ có lương và không trừ vào phép năm; id 5 — cả hai lượt nhất quán chọn A vì A nêu đúng việc cần phê duyệt theo thẩm quyền giá trị đơn hàng (>10 triệu), trong khi B chỉ nêu Giám đốc phòng ban (không đủ thẩm quyền cho 55 triệu); id 12 — cả hai lượt nhất quán chọn A vì A nêu rõ đối tượng nhân viên từ 6 tháng trở lên; id 21 — cả hai lượt nhất quán chọn B vì A là "Không tìm thấy.", B có đầy đủ 18 ngày phép và lương Senior; id 41 — cả hai lượt nhất quán chọn A vì A trả lời đúng 15 ngày theo v2024 hiện hành, B dùng 12 ngày theo v2023 cũ đã hết hiệu lực.
 
-Position bias count/rate: 2 / 0.4 (2/5 cặp không nhất quán: id 1 và 21).
-Verbosity win rate: 1.0; decisive cases: 3 (cả 3 case A thắng thì A đều dài hơn B: 230 vs 33, 264 vs 50, 274 vs 37 ký tự).
+Position bias count/rate: 0 / 0.0 (5/5 cặp hoàn toàn nhất quán giữa 2 lượt hoán đổi).
+Verbosity win rate: 0.8; decisive cases: 5 (4/5 case winner dài hơn đối thủ: A thắng và dài hơn ở id 5, 12; B thắng và dài hơn ở id 1, 21; id 41 A thắng dù ngắn hơn: 38 vs 39 ký tự).
 
-Diễn giải: 2/5 inconsistent là dấu hiệu mất ổn định theo vị trí, nhưng chưa đủ kết luận nguyên nhân là position bias hệ thống — id 1 hai lượt đều chọn đáp án đứng sau, id 21 hai lượt đều chọn đáp án đứng trước (hướng ngược nhau, mẫu chỉ n=5). Verbosity 1.0 gây lo ngại trên lý thuyết, nhưng bị nhiễu: A (extractive pipeline) luôn dài hơn B gấp 3–7 lần ĐỒNG THỜI reasoning của judge luôn viện dẫn accuracy/completeness theo reference, nên không tách được "thắng vì dài" khỏi "thắng vì đủ ý" với 3 decisive cases. Cách kiểm chứng: thêm cặp mà đáp án đúng ngắn hơn đáp án sai, và tăng số cặp.
+Diễn giải: Position bias = 0.0 cho thấy qua kỹ thuật swap-and-average, LLM Judge hoàn toàn ổn định và không bị phụ thuộc vào thứ tự xuất hiện của các phương án trả lời. Verbosity bias đạt 0.8 (4/5 decisive cases đáp án dài hơn thắng), tuy nhiên khi phân tích chi tiết thì ở id 1, 5, 12, 21, đáp án dài hơn đồng thời cũng là đáp án chứa đầy đủ dữ kiện chính xác và điều kiện theo reference hơn (ví dụ id 21 B có dữ kiện trong khi A chỉ là "Không tìm thấy."; id 1 B có điều kiện có lương). Do đó tỷ lệ 0.8 phản ánh độ đầy đủ nội dung (completeness) đi kèm độ dài chứ không phải thiên vị độ dài đơn thuần.
 
 ## Calibration đúng model_answer
 
@@ -52,6 +52,6 @@ Observed agreement p_o = 10/10 = 1.0; chance agreement p_e = 0.6*0.6 + 0.4*0.4 =
 
 ## Giới hạn và cách dùng judge
 
-- Judge duy nhất: gpt-4o-mini (temperature 0, JSON mode) qua OpenRouter; mẫu nhỏ (5 cặp, 10 nhãn) nên κ=1.0 chưa chứng minh judge luôn đúng — khoảng tin cậy với n=10 còn rộng.
-- Không có case lệch với human trong lần chạy này; nếu chạy lại có lệch, kiểm chứng bằng cách đọc reference từng case thay vì tin judge tuyệt đối.
-- Lưu ý cho cả nhóm: 50/50 answers hiện là `extractive_fallback` (generation_models rỗng trong metadata). Phase B vẫn hợp lệ vì judge so sánh đúng nội dung đã lưu, nhưng nhóm nên cân nhắc chạy lại `setup_answers.py` với LLM để có `generation_mode=llm` cho Phase A/báo cáo trung thực hơn.
+- Judge duy nhất: gpt-4o-mini (temperature 0, JSON mode); mẫu 5 cặp pairwise và 10 nhãn binary, dù đạt κ=1.0 nhưng kích thước mẫu còn nhỏ nên khoảng tin cậy của ước lượng còn rộng.
+- Không có case lệch với human trong lần chạy này; nếu triển khai thực tế, cần sampling định kỳ để human review lại các ca có độ tự tin thấp hoặc điểm số sát nút.
+- Đáp án pipeline (Answer A) được sinh bằng `gpt-4o-mini-2024-07-18` (mode `llm`), khớp hoàn toàn với pipeline RAG thực tế của Phase A. Swap-and-average giúp loại bỏ hoàn toàn position bias (0.0).

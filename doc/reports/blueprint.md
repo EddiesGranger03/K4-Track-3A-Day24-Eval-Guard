@@ -1,6 +1,6 @@
 # Blueprint CI/CD cho RAG và guardrails
 
-Phần Phase C: Ngô Đinh Minh Nhật. Đây là đề xuất CI/CD, chưa phải workflow đã triển khai.
+Phần Task 13 (Blueprint CI/CD): Nguyễn Phi Nhật — 2A202602658 (tổng hợp thực nghiệm từ Phase A của Nguyễn Nam Khánh, Phase B của Nguyễn Khánh Sơn, Phase C của Ngô Đinh Minh Nhật). Đây là đề xuất kiến trúc CI/CD, chưa phải workflow đã triển khai trên production.
 
 ## Kiến trúc và failure action
 
@@ -14,7 +14,7 @@ Key nằm trong .env được Git ignore. Báo cáo lab dùng dữ liệu giả 
 
 ## Kiểm chứng hiện tại
 
-Ngày kiểm tra: 2026-10-12. Python 3.11.9, Windows build 26300, Visual Studio Build Tools 2022 (build annoy 1.17.3). `.venv` cài theo `requirements/requirements.txt` + `constraints-core.txt`, spaCy 3.7.5 + `en_core_web_lg` 3.7.1; `pip check` không báo lỗi.
+Ngày kiểm tra: 2026-10-12. Python 3.11, Windows build 26300, Visual Studio Build Tools 2022 (build annoy 1.17.3). `.venv` cài theo `requirements/requirements.txt` + `constraints-core.txt`, spaCy 3.7.5 + `en_core_web_lg` 3.7.1; `pip check` không báo lỗi.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest tests/test_phase_c.py -q
@@ -30,7 +30,7 @@ Kết quả: **18 passed** (17 mock + 1 test Presidio thật trên câu tiếng 
 | Clean controls | **8/8** allowed, false_positive_rate = 0.0 |
 | Output rail | **4/4** đúng (2 safe giữ nguyên answer, 2 blocked) |
 
-`check_lab.py`: PASS `phase_c_guard.py`, `Phase C artifact`, `blueprint.md`. Lịch sử chỉnh sửa có kiểm chứng: lượt 1 clean 0/8 (Presidio NER nhầm, đã lọc entity); lượt 2 attacks 18/20, clean 7/8 (off-topic thơ/phim lọt, câu hỏi độ dài mật khẩu bị chặn) → làm rõ prompt `self_check_input`: chặn mọi chủ đề ngoài HR/IT policy, cho phép hỏi quy định mật khẩu nhưng chặn đòi mật khẩu/credential thật; lượt 3 đạt 20/20, 8/8. Prompt được viết theo nhóm chủ đề, không chứa câu fixtures. Phase A/B không thuộc phần này.
+`check_lab.py`: PASS `phase_c_guard.py`, `Phase C artifact`, `blueprint.md`. Lịch sử chỉnh sửa có kiểm chứng: lượt 1 clean 0/8 (Presidio NER nhầm, đã lọc entity); lượt 2 attacks 18/20, clean 7/8 (off-topic thơ/phim lọt, câu hỏi độ dài mật khẩu bị chặn) → làm rõ prompt `self_check_input`: chặn mọi chủ đề ngoài HR/IT policy, cho phép hỏi quy định mật khẩu nhưng chặn đòi mật khẩu/credential thật; lượt 3 đạt 20/20, 8/8. Prompt được viết theo nhóm chủ đề, không chứa câu fixtures. Phase A/B đã có kết quả đối chiếu đầy đủ.
 
 ## Phạm vi và số đo latency
 
@@ -51,13 +51,25 @@ Budget input-layer P95 là 500 ms; thực tế P95 = 1991.30 ms → `latency_bud
 
 ## CI gates đề xuất
 
-- PR: chạy test offline và kiểm tra schema; không cấp key cho job không tin cậy.
-- Job live có secret riêng: chạy scripts/run_experiments.py --phase c --live --latency-samples 20.
-- Sau runner, gọi validate_phase_c với fixtures và report thật. Runner lưu cả thử nghiệm không đạt; việc có file không tự chứng minh đạt.
-- Mốc lab: attacks ít nhất 15/20, clean 8/8 allowed và output 4/4 đúng. CI đề xuất nâng attacks lên 18/20; script phải kiểm tra riêng ngưỡng này và trả nonzero nếu không đạt. Biến MIN_* chưa thực thi không tạo gate.
-- Chỉ áp dụng gate full-guard P95 sau khi thực sự đo full request; không sửa số để đạt budget.
+Dựa trên bằng chứng thực nghiệm của cả 3 Phase A, B, C, thiết lập 3 cổng kiểm soát (CI Gates) bắt buộc trước khi deploy:
 
-Sau khi Phase A/B có kết quả, có thể bổ sung gate faithfulness ít nhất 0.75 và avg_score ít nhất 0.65. Đây là ngưỡng đề xuất, chưa có số liệu để xác nhận.
+1. **Gate 1 — RAG Quality Gate (Phase A Evidence)**:
+   - Factual mean `avg_score` $\ge 0.75$ (thực tế nhóm đạt 0.8099).
+   - Multi-hop mean `avg_score` $\ge 0.60$ (thực tế nhóm đạt 0.6501).
+   - Overall RAGAS mean $\ge 0.70$ (thực tế 0.7337).
+   - Bottom 10 không được chứa câu lỗi do hallucination hoàn toàn (faithfulness = 0 kèm context đầy đủ).
+
+2. **Gate 2 — LLM Judge Reliability Gate (Phase B Evidence)**:
+   - Cohen’s $\kappa \ge 0.60$ đối chiếu trên tập 10 human labels (thực tế nhóm đạt $\kappa = 1.0$, đạt mức substantial agreement trở lên).
+   - Position bias rate $\le 0.20$ sau kỹ thuật swap-and-average 2 lượt (thực tế nhóm đạt 0.0 sau khi loại bỏ bias thứ tự).
+   - Quyết định decisive phải được kiểm tra chéo không phụ thuộc hoàn toàn vào độ dài câu (verbosity).
+
+3. **Gate 3 — Security & Guardrail Gate (Phase C Evidence)**:
+   - Adversarial attacks: chặn $\ge 18/20$ (90% trở lên; thực tế nhóm đạt 20/20 = 100%).
+   - Clean controls: $8/8$ allowed, false positive rate bắt buộc $= 0.0$ (thực tế nhóm đạt 0.0).
+   - Output rail: $100\%$ đúng trên tập kiểm thử (4/4 cases; PII/secrets redact, câu hỏi hợp lệ giữ nguyên).
+   - Unit test pass 100% offline; schema validate thành công trước khi deploy.
+   - Khi triển khai local guard model, kích hoạt thêm Gate latency P95 $\le 500$ ms cho input layers.
 
 ## Monitoring và cải tiến
 
