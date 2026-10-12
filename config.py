@@ -48,6 +48,40 @@ PAIR_QUESTION_IDS = (1, 5, 12, 21, 41)
 GENERATION_MODEL = "gpt-4o-mini"
 JUDGE_MODEL = "gpt-4o-mini"
 
+# --- Day 18 Compatibility (for m4_eval and m5_enrichment) ---
+LLM_MODEL = os.getenv("LLM_MODEL", GENERATION_MODEL)
+LLM_BASE_URL = os.getenv("LLM_BASE_URL", "")
+LLM_API_KEY = os.getenv("LLM_API_KEY", "") or OPENAI_API_KEY
+if not LLM_BASE_URL and LLM_API_KEY.startswith("sk-or-v1"):
+    LLM_BASE_URL = "https://openrouter.ai/api/v1"
+
+
+def get_llm_client():
+    """OpenAI-compatible client theo LLM_BASE_URL (OpenRouter/Groq/OpenAI)."""
+    from openai import OpenAI
+    if LLM_BASE_URL:
+        return OpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
+    return OpenAI()
+
+
+def get_ragas_llm_kwargs() -> dict:
+    """Kwargs ChatOpenAI cho RAGAS judge (chỉ truyền base khi có)."""
+    kwargs: dict = {
+        "model_name": LLM_MODEL,
+        "temperature": 0,
+        "max_tokens": int(os.getenv("LLM_MAX_TOKENS", "1000")),
+    }
+    if LLM_API_KEY:
+        kwargs["openai_api_key"] = LLM_API_KEY
+    if LLM_BASE_URL:
+        kwargs["openai_api_base"] = LLM_BASE_URL
+    return kwargs
+
+
+def has_llm_key() -> bool:
+    return bool(LLM_API_KEY)
+
+
 # --- Guardrail latency budget ---
 LATENCY_BUDGET_P95_MS = 500  # Full guard target; Task 12 currently measures input guards only.
 PRESIDIO_LANGUAGE = "en"    # Presidio base language; custom VN recognizers added via PatternRecognizer
